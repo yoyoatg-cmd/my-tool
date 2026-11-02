@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>圓管滿流計算（曼寧公式）</title>
+  <meta name="description" content="輸入管徑、坡度與曼寧粗糙係數，計算圓形管滿流流速與流量。">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center;
+      font-family: "Noto Sans TC", sans-serif; color: #e6f1ff;
+      background: radial-gradient(circle at 20% 20%, #1e3a5f, #0b1220 70%);
+    }
+    .card {
+      width: min(440px, 92vw); padding: 2rem; border-radius: 20px;
+      background: rgba(255,255,255,0.06); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+    h1 { margin: 0 0 .3rem; font-size: 1.5rem; }
+    .sub { margin: 0 0 1.5rem; color: #8fb3d9; font-size: .9rem; }
+    label { display: block; margin-bottom: 1rem; font-size: .9rem; color: #b8d4f0; }
+    input {
+      width: 100%; margin-top: .35rem; padding: .7rem .9rem; font-size: 1rem;
+      border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(0,0,0,0.25); color: #fff; transition: border-color .2s;
+    }
+    input:focus { outline: none; border-color: #4fc3f7; }
+    button {
+      width: 100%; padding: .8rem; font-size: 1rem; font-weight: 600; cursor: pointer;
+      border: none; border-radius: 10px; color: #0b1220;
+      background: linear-gradient(135deg, #4fc3f7, #81e6d9);
+      transition: transform .15s, box-shadow .15s;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79,195,247,.35); }
+    .result { margin-top: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+    .stat { padding: 1rem; border-radius: 12px; background: rgba(79,195,247,0.1); text-align: center; }
+    .stat b { display: block; font-size: 1.4rem; color: #81e6d9; }
+    .stat span { font-size: .8rem; color: #8fb3d9; }
+    .error { margin-top: 1rem; color: #ff8a80; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>圓管滿流計算</h1>
+    <p class="sub">曼寧公式 V = (1/n)·R<sup>2/3</sup>·S<sup>1/2</sup>，R = D/4</p>
+    <form method="post">
+      {% csrf_token %}
+      <label>管徑 D（mm）
+        <input id="diameter" name="diameter" type="number" step="any" value="{{ diameter }}" required>
+      </label>
+      <label>坡度 S（%）
+        <input id="slope" name="slope" type="number" step="any" value="{{ slope }}" required>
+      </label>
+      <label>曼寧粗糙係數 n
+        <input id="n" name="n" type="number" step="any" value="{{ n }}" required>
+      </label>
+      <button id="calc-btn" type="submit">計算</button>
+    </form>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    {% if velocity %}
+    <section class="result">
+      <div class="stat"><b>{{ velocity }}</b><span>流速 V（m/s）</span></div>
+      <div class="stat"><b>{{ flow }}</b><span>流量 Q（m³/s）</span></div>
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>
